@@ -122,6 +122,13 @@ adapter is exempt from SemVer guarantees until promoted to stable.
 
 ## Changelog
 
+### v1.0.1
+
+- **Fix (Critical): Codex CLI config example.** The previous `[hooks]` table form is rejected by current Codex CLI (`config could not be loaded`) and could break a user's `~/.codex/config.toml`. Replaced with the `[[UserPromptSubmit]]` / `[[UserPromptSubmit.hooks]]` array-of-tables form; path corrected to `~/.codex/config.toml`. Surfaced by real-usage testing in Codex Desktop.
+- Added Codex hook-trust guidance and a config-recovery section to `adapters/codex/README.md`.
+- Codex adapter state dir now defaults to `~/.codex/.ctx-state` (Claude Code adapter keeps `~/.claude/.ctx-state`).
+- Codex `PostToolUse` injection wording no longer says "Sub-agent completed" (Codex fires PostToolUse after any tool); Claude Code wording unchanged.
+
 ### v1.0.0
 
 - **Claude Code adapter (stable):** capture `ctx:NN%` remaining-context via `statusLine`,

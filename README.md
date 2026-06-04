@@ -94,7 +94,7 @@ Claude sees ctx:NN% at turn start → can self-regulate session length
 - `jq`
 
 > Standalone repository: <https://github.com/KPFstudio/self-context>
-> Current release: `v1.0.0`.
+> Current release: `v1.0.1`.
 
 ## Install
 
