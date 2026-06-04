@@ -1,0 +1,41 @@
+{
+  "_comment": "Minimal example of what self-context adds to ~/.claude/settings.json. Install does this automatically (non-destructive additive merge). Do not copy-paste directly — run: bash install.sh",
+
+  "statusLine": {
+    "type": "command",
+    "command": "/path/to/self-context/adapters/claude-code/statusline-ctx-writer.sh"
+  },
+
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "_comment": "YOUR EXISTING HOOKS ARE PRESERVED HERE",
+        "hooks": [
+          { "type": "command", "command": "/path/to/your/existing/hook.js" }
+        ]
+      },
+      {
+        "_selfctx_comment": "Added by self-context install.sh — do not remove",
+        "hooks": [
+          { "type": "command", "command": "~/.claude/hooks/inject-ctx.sh" }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "_selfctx_comment": "Added by self-context — fires when Agent tool completes",
+        "matcher": "Agent",
+        "hooks": [
+          { "type": "command", "command": "~/.claude/hooks/inject-ctx-posttool.sh" }
+        ]
+      },
+      {
+        "_selfctx_comment": "Added by self-context — fires when Task tool completes (some envs)",
+        "matcher": "Task",
+        "hooks": [
+          { "type": "command", "command": "~/.claude/hooks/inject-ctx-posttool.sh" }
+        ]
+      }
+    ]
+  }
+}

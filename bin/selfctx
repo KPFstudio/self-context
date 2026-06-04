@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# selfctx — CLI entry point for self-context
+#
+# Usage:
+#   selfctx <command> [options]
+#
+# Commands:
+#   install    Install self-context into Claude Code
+#   uninstall  Remove self-context from Claude Code
+#   doctor     Run health check
+#   version    Print version
+#
+# Options passed through to install/uninstall:
+#   --yes              Skip confirmation prompts
+#   --claude-home PATH Override ~/.claude path
+
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+VERSION="1.0.0"
+
+CMD="${1:-help}"
+shift 2>/dev/null || true
+
+case "$CMD" in
+  install)
+    exec bash "${SCRIPT_DIR}/install.sh" "$@"
+    ;;
+  uninstall)
+    exec bash "${SCRIPT_DIR}/uninstall.sh" "$@"
+    ;;
+  doctor|check|health)
+    exec bash "${SCRIPT_DIR}/doctor.sh" "$@"
+    ;;
+  version|-v|--version)
+    echo "self-context (selfctx) v${VERSION}"
+    ;;
+  help|-h|--help|"")
+    cat <<EOF
+self-context (selfctx) v${VERSION}
+Self-awareness of remaining context for agentic Claude Code sessions.
+
+Usage:
+  selfctx <command> [options]
+
+Commands:
+  install    Install into Claude Code (~/.claude)
+  uninstall  Remove from Claude Code
+  doctor     Run health check
+  version    Print version
+
+Options (install / uninstall):
+  --yes              Skip confirmation prompts
+  --claude-home DIR  Override ~/.claude location (useful for testing)
+
+Quick start:
+  selfctx install
+  selfctx doctor
+  # Restart Claude Code
+EOF
+    ;;
+  *)
+    echo "Unknown command: ${CMD}" >&2
+    echo "Run 'selfctx help' for usage." >&2
+    exit 1
+    ;;
+esac
