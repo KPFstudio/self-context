@@ -1,0 +1,44 @@
+{
+  "_comment": "self-context settings snippet — install.sh merges this into ~/.claude/settings.json additively (non-destructive). Existing hooks and settings are preserved. Run: bash install.sh",
+
+  "statusLine": {
+    "type": "command",
+    "command": "SELFCTX_INSTALL_DIR/adapters/claude-code/statusline-ctx-writer.sh"
+  },
+
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "_selfctx": true,
+        "hooks": [
+          {
+            "type": "command",
+            "command": "SELFCTX_INSTALL_DIR/adapters/claude-code/hook-userpromptsubmit.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "_selfctx": true,
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "SELFCTX_INSTALL_DIR/adapters/claude-code/hook-posttooluse.sh"
+          }
+        ]
+      },
+      {
+        "_selfctx": true,
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "SELFCTX_INSTALL_DIR/adapters/claude-code/hook-posttooluse.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
