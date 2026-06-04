@@ -58,13 +58,43 @@ No interactive TUI confirmation required.
 
 ## Configuration
 
-In your Codex config (`~/.config/codex/config.toml` or equivalent), add:
+Add the hook to your Codex config (`~/.codex/config.toml`). **Back up the file first.**
 
 ```toml
-[hooks]
-UserPromptSubmit = "/path/to/self-context/adapters/codex/hook-injector.sh"
-PostToolUse = "/path/to/self-context/adapters/codex/hook-injector.sh"
+[[UserPromptSubmit]]
+
+[[UserPromptSubmit.hooks]]
+type = "command"
+command = "bash /path/to/self-context/adapters/codex/hook-injector.sh"
+timeout = 5
+statusMessage = "self-context"
+
+[[PostToolUse]]
+
+[[PostToolUse.hooks]]
+type = "command"
+command = "bash /path/to/self-context/adapters/codex/hook-injector.sh"
+timeout = 5
+statusMessage = "self-context"
 ```
+
+Replace `/path/to/self-context` with the absolute path to your clone.
+
+> The older `[hooks]` table form (`[hooks]` with `UserPromptSubmit = "..."`) is rejected by
+> current Codex CLI with `config could not be loaded`. Use the array-of-tables form above.
+
+### Hook trust
+
+Codex requires hooks to be trusted. On first launch after adding the config, Codex shows a
+hooks review prompt — trust it, or the hook will not run in normal sessions. For verification
+only, you can run with `--dangerously-bypass-hook-trust`.
+
+### If your Codex config breaks
+
+If Codex reports `config could not be loaded` after editing `~/.codex/config.toml`:
+
+1. Restore from your backup, or
+2. Remove just the `[[UserPromptSubmit]]` / `[[PostToolUse]]` blocks you added.
 
 ## Dependencies
 

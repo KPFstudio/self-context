@@ -37,7 +37,7 @@
 
 input=$(cat)
 
-CTX_STATE_DIR="${SELFCTX_CTX_STATE_DIR:-$HOME/.claude/.ctx-state}"
+CTX_STATE_DIR="${SELFCTX_CTX_STATE_DIR:-$HOME/.codex/.ctx-state}"
 CORE_DIR="${SELFCTX_CORE_DIR:-$(dirname "$0")/../../core}"
 
 # jq is required for transcript parsing
@@ -109,5 +109,5 @@ ctx="ctx:${remaining_pct}%"
   printf '%s' "$ctx" > "${CTX_STATE_DIR}/${session_id:-default}"
 } 2>/dev/null || true
 
-# Delegate emission to core
-exec bash "${CORE_DIR}/emit-injection.sh" "${CTX_STATE_DIR}/${session_id:-default}" "$hook_event_name"
+# Delegate emission to core (pass "codex" as adapter so PostToolUse uses codex-specific wording)
+exec bash "${CORE_DIR}/emit-injection.sh" "${CTX_STATE_DIR}/${session_id:-default}" "$hook_event_name" "codex"
