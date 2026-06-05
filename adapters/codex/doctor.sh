@@ -89,15 +89,6 @@ else
   FAIL_COUNT=$((FAIL_COUNT + 1))
 fi
 
-if [ -d "$CTX_STATE_DIR" ]; then
-  file_count=$(ls "$CTX_STATE_DIR" 2>/dev/null | wc -l | tr -d ' ')
-  ok "ctx-state directory: ${CTX_STATE_DIR} (${file_count} file(s))"
-else
-  warn "ctx-state directory not found yet: ${CTX_STATE_DIR}"
-  warn "It is created after the hook runs once."
-  WARN_COUNT=$((WARN_COUNT + 1))
-fi
-
 latest_transcript=$(find "${CODEX_HOME}/sessions" -name 'rollout-*.jsonl' -type f 2>/dev/null | sort | tail -1 || true)
 if [ -n "$latest_transcript" ]; then
   info_ "Latest rollout: ${latest_transcript}"
@@ -114,6 +105,15 @@ if [ -n "$latest_transcript" ]; then
   fi
 else
   warn "No Codex rollout JSONL found yet. Start a Codex session, then run doctor again."
+  WARN_COUNT=$((WARN_COUNT + 1))
+fi
+
+if [ -d "$CTX_STATE_DIR" ]; then
+  file_count=$(ls "$CTX_STATE_DIR" 2>/dev/null | wc -l | tr -d ' ')
+  ok "ctx-state directory: ${CTX_STATE_DIR} (${file_count} file(s))"
+else
+  warn "ctx-state directory not found yet: ${CTX_STATE_DIR}"
+  warn "It is created after the hook runs once."
   WARN_COUNT=$((WARN_COUNT + 1))
 fi
 

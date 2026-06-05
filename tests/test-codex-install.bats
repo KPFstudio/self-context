@@ -6,6 +6,7 @@ setup() {
   REPO_ROOT="$(cd "$(dirname "$BATS_TEST_FILENAME")/.." && pwd)"
   INSTALL="${REPO_ROOT}/adapters/codex/install.sh"
   UNINSTALL="${REPO_ROOT}/adapters/codex/uninstall.sh"
+  DOCTOR="${REPO_ROOT}/adapters/codex/doctor.sh"
   HOOK="${REPO_ROOT}/adapters/codex/hook-injector.sh"
 
   FAKE_CODEX="$(mktemp -d)"
@@ -70,4 +71,20 @@ run_uninstall() {
   run_uninstall
   grep -Fq 'model = "gpt-5.5"' "${FAKE_CODEX}/config.toml"
   grep -Fq '[projects."/tmp/example"]' "${FAKE_CODEX}/config.toml"
+}
+
+@test "codex-doctor: first run creates ctx-state before reporting directory status" {
+  run_install
+  rm -rf "${FAKE_CODEX}/.ctx-state"
+
+  transcript_dir="${FAKE_CODEX}/sessions/2026/06/05"
+  mkdir -p "$transcript_dir"
+  transcript="${transcript_dir}/rollout-2026-06-05T00-00-00-test.jsonl"
+  printf '{"type":"event_msg","payload":{"type":"token_count","info":{"last_token_usage":{"input_tokens":50000,"cached_input_tokens":0,"output_tokens":512,"reasoning_output_tokens":0,"total_tokens":50512},"model_context_window":200000}}}\n' > "$transcript"
+
+  run bash "$DOCTOR" --codex-home "$FAKE_CODEX"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"Hook smoke: additionalContext JSON returned correctly"* ]]
+  [[ "$output" == *"ctx-state directory:"* ]]
+  [[ "$output" != *"ctx-state directory not found yet"* ]]
 }

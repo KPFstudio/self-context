@@ -126,6 +126,13 @@ adapter is exempt from SemVer guarantees until promoted to stable.
 
 ## Changelog
 
+### v1.0.3
+
+- Improved Codex doctor first-run UX: `adapters/codex/doctor.sh` now runs the
+  rollout smoke test before reporting `ctx-state` directory status, so a successful
+  first doctor run does not leave a misleading warning after creating `.ctx-state`.
+- Added Bats coverage for first-run Codex doctor behavior. Full suite: 64 tests passing.
+
 ### v1.0.2
 
 - Added Codex experimental installer / doctor / uninstaller:
@@ -158,7 +165,7 @@ adapter is exempt from SemVer guarantees until promoted to stable.
   `install.sh`, `doctor.sh`, and `uninstall.sh` for `~/.codex/config.toml`.
 - **Docs:** English `README.md` and Japanese `README.ja.md` with "stable target: Claude Code",
   "What it is NOT", and Codex-experimental sections; MIT `LICENSE`.
-- **Tests:** 63 `bats` tests covering injection, hooks, install/uninstall merge semantics,
+- **Tests:** 64 `bats` tests covering injection, hooks, install/uninstall merge semantics,
   the Codex adapter formula, and C-1 / M-1 / M-4 regressions — all passing.
 
 ## License
