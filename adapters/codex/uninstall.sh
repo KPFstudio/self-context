@@ -80,6 +80,9 @@ awk -v hook="$HOOK_CMD" '
     if (inblock && keep) printf "%s", block
   }
 ' "$CONFIG" > "$tmp"
+tmp2=$(mktemp)
+grep -v '^# self-context Codex adapter (experimental)$' "$tmp" > "$tmp2"
+mv "$tmp2" "$tmp"
 mv "$tmp" "$CONFIG"
 
 ok "Removed matching self-context Codex hook blocks"

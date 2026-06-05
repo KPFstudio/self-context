@@ -88,3 +88,62 @@ run_uninstall() {
   [[ "$output" == *"ctx-state directory:"* ]]
   [[ "$output" != *"ctx-state directory not found yet"* ]]
 }
+
+@test "codex-install: supports older codex without --strict-config" {
+  fake_bin="$(mktemp -d)"
+  cat > "${fake_bin}/codex" <<'EOF'
+#!/usr/bin/env bash
+if [ "${1:-}" = "--strict-config" ]; then
+  echo "error: unknown argument '--strict-config'" >&2
+  exit 2
+fi
+if [ "${1:-}" = "--version" ] || [ "$#" -eq 0 ]; then
+  if [ -n "${CODEX_HOME:-}" ] && grep -q 'invalid toml' "${CODEX_HOME}/config.toml" 2>/dev/null; then
+    echo "config parse error" >&2
+    exit 1
+  fi
+  echo "codex-cli 0.128.0"
+  exit 0
+fi
+exit 0
+EOF
+  chmod +x "${fake_bin}/codex"
+
+  PATH="${fake_bin}:$PATH" run bash "$INSTALL" --yes --codex-home "$FAKE_CODEX"
+  rm -rf "$fake_bin"
+
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"Codex config parses"* ]]
+  [[ "$output" != *"strict-config"* ]]
+}
+
+@test "codex-doctor: supports older codex without --strict-config" {
+  run_install
+  fake_bin="$(mktemp -d)"
+  cat > "${fake_bin}/codex" <<'EOF'
+#!/usr/bin/env bash
+if [ "${1:-}" = "--strict-config" ]; then
+  echo "error: unknown argument '--strict-config'" >&2
+  exit 2
+fi
+if [ "${1:-}" = "--version" ] || [ "$#" -eq 0 ]; then
+  echo "codex-cli 0.128.0"
+  exit 0
+fi
+exit 0
+EOF
+  chmod +x "${fake_bin}/codex"
+
+  PATH="${fake_bin}:$PATH" run bash "$DOCTOR" --codex-home "$FAKE_CODEX"
+  rm -rf "$fake_bin"
+
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"Codex config parses"* ]]
+  [[ "$output" != *"strict-config"* ]]
+}
+
+@test "codex-uninstall: removes self-context comment with hook blocks" {
+  run_install
+  run_uninstall
+  ! grep -Fq '# self-context Codex adapter (experimental)' "${FAKE_CODEX}/config.toml"
+}

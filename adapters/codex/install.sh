@@ -125,10 +125,10 @@ else
 fi
 
 if command -v codex >/dev/null 2>&1; then
-  if codex --strict-config --version >/dev/null 2>&1; then
-    ok "Codex config parses with --strict-config"
+  if CODEX_HOME="$CODEX_HOME" codex --version >/dev/null 2>&1; then
+    ok "Codex config parses"
   else
-    fail "Codex config did not parse with --strict-config"
+    fail "Codex config did not parse"
     info "Restore with: cp ${BACKUP} ${CONFIG}"
     exit 1
   fi
