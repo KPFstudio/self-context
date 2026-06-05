@@ -54,10 +54,10 @@ fi
 
 if command -v codex >/dev/null 2>&1; then
   ok "codex found: $(codex --version 2>/dev/null | head -1 || echo 'version unknown')"
-  if codex --strict-config --version >/dev/null 2>&1; then
-    ok "Codex config parses with --strict-config"
+  if CODEX_HOME="$CODEX_HOME" codex --version >/dev/null 2>&1; then
+    ok "Codex config parses"
   else
-    fail "Codex config does not parse with --strict-config"
+    fail "Codex config does not parse"
     FAIL_COUNT=$((FAIL_COUNT + 1))
   fi
 else

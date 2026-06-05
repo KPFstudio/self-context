@@ -99,7 +99,7 @@ Codex support is real but not yet part of the stable surface. Use
 trust when prompted.
 
 > Standalone repository: <https://github.com/KPFstudio/self-context>
-> Current release: `v1.0.4`.
+> Current release: `v1.0.5`.
 
 ## Install
 
@@ -202,7 +202,7 @@ bash adapters/codex/doctor.sh
 Checks:
 - `jq`, `awk`, and `codex` availability
 - `~/.codex/config.toml` contains the self-context hook
-- Codex config parses with `codex --strict-config --version`
+- Codex config parses with the installed `codex` CLI
 - Hook script exists and is executable
 - Latest rollout JSONL can produce `additionalContext`
 

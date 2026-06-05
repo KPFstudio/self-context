@@ -127,6 +127,14 @@ adapter is exempt from SemVer guarantees until promoted to stable.
 
 ## Changelog
 
+### v1.0.5
+
+- Fixed Codex installer / doctor false failures on older Codex CLI versions that
+  do not support `--strict-config` (for example `codex-cli 0.128.0`). Config parse
+  validation now uses the installed `codex` CLI without that newer flag.
+- Codex uninstall now removes the self-context section comment together with the
+  matching hook blocks.
+
 ### v1.0.4
 
 - Clarified README requirements so Codex CLI / Codex Desktop appear explicitly as
