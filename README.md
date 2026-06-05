@@ -89,12 +89,17 @@ Claude sees ctx:NN% at turn start → can self-regulate session length
 
 ## Requirements
 
-- Claude Code (recent version with `statusLine` and `hooks` support)
-- `bash`
-- `jq`
+| Target | Requirements | Support level |
+|--------|--------------|---------------|
+| **Claude Code** | Recent version with `statusLine` and `hooks`; `bash`; `jq` | **Stable** |
+| **Codex CLI / Codex Desktop** | Codex with hooks and rollout JSONL transcripts; `bash`; `jq`; `awk` | **Experimental** |
+
+Codex support is real but not yet part of the stable surface. Use
+`adapters/codex/install.sh` or `bin/selfctx install-codex` and approve Codex hook
+trust when prompted.
 
 > Standalone repository: <https://github.com/KPFstudio/self-context>
-> Current release: `v1.0.3`.
+> Current release: `v1.0.4`.
 
 ## Install
 

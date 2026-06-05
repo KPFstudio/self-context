@@ -18,7 +18,7 @@
 #   --claude-home PATH Override ~/.claude path
 
 SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-VERSION="1.0.3"
+VERSION="1.0.4"
 
 CMD="${1:-help}"
 shift 2>/dev/null || true
