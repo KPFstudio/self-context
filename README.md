@@ -2,9 +2,9 @@
 
 > Self-awareness of remaining context for agentic coding sessions
 
-> ⚠️ **Claude Code only (v1).** `statusLine` and `hooks` are Claude Code-specific mechanisms.
-> This tool does **not** work with Cursor, Codex CLI, OpenCode, Gemini CLI, or other agents.
-> A Codex CLI adapter is included as **experimental** (see below).
+> ⚠️ **Stable v1 support targets Claude Code.** `statusLine` is Claude Code-specific.
+> Codex CLI is supported only through the included **experimental** adapter (see below).
+> Cursor, OpenCode, Gemini CLI, and other agents are not supported.
 
 ---
 
@@ -94,9 +94,11 @@ Claude sees ctx:NN% at turn start → can self-regulate session length
 - `jq`
 
 > Standalone repository: <https://github.com/KPFstudio/self-context>
-> Current release: `v1.0.1`.
+> Current release: `v1.0.2`.
 
 ## Install
+
+### Claude Code (stable)
 
 ```bash
 git clone https://github.com/KPFstudio/self-context
@@ -122,7 +124,37 @@ bash install.sh
 
 The wrapper will delegate to your existing command and additionally capture `ctx:NN%`.
 
+### Codex CLI / Codex Desktop (experimental)
+
+Codex support is included as an experimental adapter. It does not use Claude Code
+`statusLine`; it reads Codex rollout JSONL via hook stdin and computes the same
+remaining-% shown by the Codex TUI.
+
+```bash
+git clone https://github.com/KPFstudio/self-context
+cd self-context
+bash adapters/codex/install.sh
+```
+
+Then restart Codex CLI / Codex Desktop. Codex will ask you to review and trust the
+new hook; approve it, or the adapter will be configured but will not run.
+
+Verify after you have run at least one Codex turn:
+
+```bash
+bash adapters/codex/doctor.sh
+```
+
+If you use the convenience entrypoint:
+
+```bash
+bin/selfctx install-codex
+bin/selfctx doctor-codex
+```
+
 ## Uninstall
+
+Claude Code:
 
 ```bash
 bash uninstall.sh
@@ -131,7 +163,18 @@ bash uninstall.sh
 This removes the installed hook scripts and cleans selfctx entries from `settings.json`.
 Your original hooks and other settings are preserved. Backup files are listed but not deleted.
 
+Codex:
+
+```bash
+bash adapters/codex/uninstall.sh
+```
+
+This removes only the matching self-context hook blocks from `~/.codex/config.toml`.
+It creates a timestamped backup first.
+
 ## Doctor
+
+Claude Code:
 
 ```bash
 bash doctor.sh
@@ -145,6 +188,19 @@ Checks:
 - Script files exist and are executable
 - Latest ctx value from most recent session
 
+Codex:
+
+```bash
+bash adapters/codex/doctor.sh
+```
+
+Checks:
+- `jq`, `awk`, and `codex` availability
+- `~/.codex/config.toml` contains the self-context hook
+- Codex config parses with `codex --strict-config --version`
+- Hook script exists and is executable
+- Latest rollout JSONL can produce `additionalContext`
+
 ## Configuration
 
 ### Environment variables
@@ -155,6 +211,14 @@ Checks:
 | `SELFCTX_STATUSLINE_CMD` | (none) | Your existing statusLine command to delegate to |
 | `SELFCTX_CORE_DIR` | `<install>/core` | Path to core/emit-injection.sh |
 
+Codex adapter:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `CODEX_HOME` | `~/.codex` | Codex config and rollout directory |
+| `SELFCTX_CTX_STATE_DIR` | `~/.codex/.ctx-state` | Directory for per-session ctx files |
+| `SELFCTX_CORE_DIR` | `<install>/core` | Path to core/emit-injection.sh |
+
 ### PostToolUse matcher: Agent vs Task
 
 Claude Code environments differ in the tool name used for sub-agents.
@@ -162,18 +226,23 @@ This repo's environment uses `Agent`; some versions use `Task`.
 `install.sh` registers both matchers so the hook fires on either.
 If you experience double-firing, remove the matcher you don't need from `settings.json`.
 
-## Claude Code only (v1)
+## Stable surface: Claude Code (v1)
 
 `statusLine` and `hooks.UserPromptSubmit` / `hooks.PostToolUse` are mechanisms
-specific to Claude Code. They do not exist in:
+specific to Claude Code. Other hosts need different adapters:
 
-- Codex CLI (hooks exist, but context signal is different — see Experimental below)
+- Codex CLI: experimental adapter included below; it uses rollout JSONL instead of `statusLine`
 - OpenCode (partial hooks support, per-turn injection unconfirmed as of 2026-06-02)
 - Cursor, Windsurf, Gemini CLI, etc.
 
 ## Experimental: Codex CLI adapter
 
 `adapters/codex/hook-injector.sh` is an **experimental** adapter for Codex CLI.
+
+The installer writes the same hook configuration to `~/.codex/config.toml`, which is
+the shared config location used by normal Codex CLI installations and current Codex
+Desktop builds that use the same Codex home. If your Desktop build uses a different
+Codex home, set `CODEX_HOME` or pass `--codex-home`.
 
 It works by reading the `transcript_path` from hook stdin, parsing the rollout JSONL,
 and computing the remaining percentage using the **same formula as the Codex TUI**

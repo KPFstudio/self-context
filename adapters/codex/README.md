@@ -7,6 +7,46 @@
 | (a) Remaining signal source | ✅ `transcript_path` → rollout JSONL `token_count` event |
 | (b) Context injection sink | ✅ `hookSpecificOutput.additionalContext` (Codex hooks docs confirmed) |
 | TUI parity verified | ✅ Formula confirmed from OSS source (2026-06-03) |
+| Installer / doctor | ✅ Included for `~/.codex/config.toml` |
+
+## Quick install
+
+From the repository root:
+
+```bash
+bash adapters/codex/install.sh
+```
+
+Restart Codex CLI / Codex Desktop after installing. Codex requires hook trust:
+when it shows the hook review prompt, trust the self-context hook. If you do not
+trust it, the config can be present while the hook never runs in normal sessions.
+
+After at least one Codex turn, verify:
+
+```bash
+bash adapters/codex/doctor.sh
+```
+
+Convenience entrypoint:
+
+```bash
+bin/selfctx install-codex
+bin/selfctx doctor-codex
+```
+
+Uninstall:
+
+```bash
+bash adapters/codex/uninstall.sh
+```
+
+The installer targets `~/.codex/config.toml` by default. This is the normal Codex CLI
+config location and is also used by current Codex Desktop builds when they share the
+same Codex home. If your environment uses another location:
+
+```bash
+bash adapters/codex/install.sh --codex-home /path/to/codex-home
+```
 
 ## How it works
 
@@ -56,9 +96,10 @@ Formula confirmed by reading the public OSS source at
 
 No interactive TUI confirmation required.
 
-## Configuration
+## Manual configuration
 
-Add the hook to your Codex config (`~/.codex/config.toml`). **Back up the file first.**
+The installer above is preferred. If you need to wire it manually, add the hook
+to your Codex config (`~/.codex/config.toml`). **Back up the file first.**
 
 ```toml
 [[UserPromptSubmit]]

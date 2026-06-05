@@ -27,11 +27,12 @@ It is a **capture → persist → inject** pipeline.
 - **Not a token counter.** Claude Code computes `context_window.remaining_percentage`
   internally; selfctx only reads, stores, and re-injects that value. No token math, no
   model-specific window calculation, no inference about "what is in context".
-- **Not a multi-agent tool (in v1.0.0).** `statusLine` and `hooks` are Claude Code-specific
-  mechanisms. selfctx does **not** work with Cursor, OpenCode, Gemini CLI, etc.
-- **Codex / OpenCode support is experimental / under investigation**, not a v1.0.0 feature.
-  A Codex CLI adapter is included with feasibility confirmed but is **not** part of the
-  stable surface — see *Roadmap* below.
+- **Not a universal multi-agent tool.** Stable v1 support targets Claude Code, where
+  `statusLine` provides the remaining-context signal. Cursor, OpenCode, Gemini CLI, etc.
+  are not supported.
+- **Codex CLI support is experimental**, not part of the stable surface. A Codex CLI
+  adapter is included with feasibility confirmed, plus installer / doctor / uninstaller
+  scripts for first-run validation — see *Roadmap* below.
 
 ## Requirements
 
@@ -98,6 +99,7 @@ deleted automatically.
 | `core/emit-injection.sh` — shared injection JSON builder | stable |
 | `install.sh` / `uninstall.sh` / `doctor.sh` / `bin/selfctx` | stable |
 | `adapters/codex/hook-injector.sh` — Codex CLI adapter | **experimental** |
+| `adapters/codex/install.sh` / `doctor.sh` / `uninstall.sh` | **experimental** |
 
 v1.0.0 ships the Claude Code adapter: per-turn ctx self-awareness via a statusLine writer
 plus `UserPromptSubmit` / `PostToolUse` injection hooks, with safe install/uninstall/doctor
@@ -105,11 +107,13 @@ tooling.
 
 ## Known limitations / Roadmap
 
-- **Claude Code only.** Other agents are not supported in v1.0.0.
+- **Stable support targets Claude Code.** Other hosts are not supported in the stable v1
+  surface.
 - **Codex CLI adapter — experimental.** Feasibility is confirmed and TUI-parity of the
   remaining-% formula was verified from Codex OSS source
   (`codex-rs/tui/src/token_usage.rs`, 2026-06-03). It is **not** considered stable until
-  real-world usage validation is complete. See `adapters/codex/README.md`.
+  real-world usage validation across Codex CLI / Desktop and hook-trust flows is complete.
+  See `adapters/codex/README.md`.
 - **OpenCode — under investigation.** Needs confirmation of a per-turn hook plus a token /
   context-window exposure API before an adapter can be built.
 
@@ -121,6 +125,16 @@ backward-compatible adapters or flags bump MINOR; fixes bump PATCH. The experime
 adapter is exempt from SemVer guarantees until promoted to stable.
 
 ## Changelog
+
+### v1.0.2
+
+- Added Codex experimental installer / doctor / uninstaller:
+  `adapters/codex/install.sh`, `adapters/codex/doctor.sh`, and
+  `adapters/codex/uninstall.sh`.
+- Added `bin/selfctx install-codex`, `doctor-codex`, and `uninstall-codex`.
+- Updated English / Japanese README and Codex adapter README with Codex CLI /
+  Desktop install, hook trust, doctor, uninstall, and `--codex-home` guidance.
+- Added Codex install / uninstall Bats coverage. Full suite: 63 tests passing.
 
 ### v1.0.1
 
@@ -140,10 +154,11 @@ adapter is exempt from SemVer guarantees until promoted to stable.
   `statusLine` and preserves other hooks, and `doctor.sh` health check.
 - **`bin/selfctx`** convenience entrypoint.
 - **Experimental Codex CLI adapter** (`adapters/codex/`): remaining-% computed with the same
-  formula as the Codex TUI; feasibility and TUI parity confirmed from OSS source.
-- **Docs:** English `README.md` and Japanese `README.ja.md` with "Claude Code only",
+  formula as the Codex TUI; feasibility and TUI parity confirmed from OSS source. Includes
+  `install.sh`, `doctor.sh`, and `uninstall.sh` for `~/.codex/config.toml`.
+- **Docs:** English `README.md` and Japanese `README.ja.md` with "stable target: Claude Code",
   "What it is NOT", and Codex-experimental sections; MIT `LICENSE`.
-- **Tests:** 57 `bats` tests covering injection, hooks, install/uninstall merge semantics,
+- **Tests:** 63 `bats` tests covering injection, hooks, install/uninstall merge semantics,
   the Codex adapter formula, and C-1 / M-1 / M-4 regressions — all passing.
 
 ## License
