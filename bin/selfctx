@@ -8,6 +8,9 @@
 #   install    Install self-context into Claude Code
 #   uninstall  Remove self-context from Claude Code
 #   doctor     Run health check
+#   install-codex    Install experimental Codex adapter
+#   uninstall-codex  Remove experimental Codex adapter
+#   doctor-codex     Run Codex adapter health check
 #   version    Print version
 #
 # Options passed through to install/uninstall:
@@ -15,7 +18,7 @@
 #   --claude-home PATH Override ~/.claude path
 
 SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-VERSION="1.0.1"
+VERSION="1.0.2"
 
 CMD="${1:-help}"
 shift 2>/dev/null || true
@@ -30,31 +33,49 @@ case "$CMD" in
   doctor|check|health)
     exec bash "${SCRIPT_DIR}/doctor.sh" "$@"
     ;;
+  install-codex|codex-install)
+    exec bash "${SCRIPT_DIR}/adapters/codex/install.sh" "$@"
+    ;;
+  uninstall-codex|codex-uninstall)
+    exec bash "${SCRIPT_DIR}/adapters/codex/uninstall.sh" "$@"
+    ;;
+  doctor-codex|codex-doctor|check-codex)
+    exec bash "${SCRIPT_DIR}/adapters/codex/doctor.sh" "$@"
+    ;;
   version|-v|--version)
     echo "self-context (selfctx) v${VERSION}"
     ;;
   help|-h|--help|"")
     cat <<EOF
 self-context (selfctx) v${VERSION}
-Self-awareness of remaining context for agentic Claude Code sessions.
+Self-awareness of remaining context for agentic coding sessions.
 
 Usage:
   selfctx <command> [options]
 
 Commands:
-  install    Install into Claude Code (~/.claude)
-  uninstall  Remove from Claude Code
-  doctor     Run health check
-  version    Print version
+  install          Install into Claude Code (~/.claude)
+  uninstall        Remove from Claude Code
+  doctor           Run Claude Code health check
+  install-codex    Install experimental Codex CLI / Desktop adapter
+  uninstall-codex  Remove experimental Codex adapter
+  doctor-codex     Run Codex adapter health check
+  version          Print version
 
 Options (install / uninstall):
   --yes              Skip confirmation prompts
   --claude-home DIR  Override ~/.claude location (useful for testing)
+  --codex-home DIR   Override ~/.codex location (Codex commands only)
 
 Quick start:
   selfctx install
   selfctx doctor
   # Restart Claude Code
+
+Codex experimental:
+  selfctx install-codex
+  # Restart Codex and trust the hook when prompted
+  selfctx doctor-codex
 EOF
     ;;
   *)
