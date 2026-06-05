@@ -38,12 +38,13 @@ It is a **capture → persist → inject** pipeline.
 
 | Requirement | Notes |
 |-------------|-------|
-| **Claude Code** | recent version with `statusLine` and `hooks` (`UserPromptSubmit`, `PostToolUse`) support |
+| **Claude Code** | stable target; recent version with `statusLine` and `hooks` (`UserPromptSubmit`, `PostToolUse`) support |
+| **Codex CLI / Codex Desktop** | experimental target; Codex with hooks and rollout JSONL transcripts |
 | **`bash`** | hook and installer scripts are bash |
 | **`jq`** | used for non-destructive `settings.json` merges (`brew install jq`) |
+| **`awk`** | used by the experimental Codex adapter for floating-point percentage math |
 
-The experimental Codex adapter additionally relies on the Codex rollout JSONL transcript;
-it has no extra runtime dependency beyond `bash` + `jq`.
+The experimental Codex adapter relies on the Codex rollout JSONL transcript and hook trust.
 
 ## Install / Uninstall / Doctor
 
@@ -125,6 +126,12 @@ backward-compatible adapters or flags bump MINOR; fixes bump PATCH. The experime
 adapter is exempt from SemVer guarantees until promoted to stable.
 
 ## Changelog
+
+### v1.0.4
+
+- Clarified README requirements so Codex CLI / Codex Desktop appear explicitly as
+  experimental supported targets instead of looking unsupported.
+- Added `awk` to Codex requirements because the adapter uses it for percentage math.
 
 ### v1.0.3
 
